@@ -15,17 +15,19 @@ import java.util.List;
 @Transactional(readOnly = true) // помечаем методы класса только на чтение
 public class UserServiceImpl implements UserService{
 
+    private  final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Autowired  // внедряем бин userRepository
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
 
         this.userRepository = userRepository;
         System.out.println("**********Userservice******************");
     }
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getUsers() {

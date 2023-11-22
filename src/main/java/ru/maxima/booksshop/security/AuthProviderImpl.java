@@ -39,8 +39,8 @@ public class AuthProviderImpl implements AuthenticationProvider {
             throw new UsernameNotFoundException("User not found");  // если пользователя нет, то выбрасываем исключение
         }
         String password = authentication.getCredentials().toString();   // если есть, то береём пароль из формы
-        if (!passwordEncoder.matches(password,user.getPassword())) {                     // сравниваем пароль из формы с паролем из базы
-            throw new BadCredentialsException("Bad credentials");       // если не совпадают, то выбрасываем исключение
+        if (!password.equals(user.getPassword()))//(!passwordEncoder.matches(password,user.getPassword())) {                     // сравниваем пароль из формы с паролем из базы
+        {  throw new BadCredentialsException("Bad credentials");       // если не совпадают, то выбрасываем исключение
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();         // пользователи, прошедшие аутентификацию

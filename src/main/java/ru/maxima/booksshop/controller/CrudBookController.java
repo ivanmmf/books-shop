@@ -1,11 +1,14 @@
 package ru.maxima.booksshop.controller;
 
+import javassist.bytecode.stackmap.BasicBlock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.maxima.booksshop.exception.BookNotFoundException;
 import ru.maxima.booksshop.exception.UserNotFoundException;
 import ru.maxima.booksshop.model.Book;
 import ru.maxima.booksshop.repository.BookRepository;
+import ru.maxima.booksshop.service.BookService;
+import ru.maxima.booksshop.service.BookServiceImpl;
 
 import java.util.List;
 
@@ -16,29 +19,23 @@ import java.util.List;
 
 // разрешаем React приложению обращаться к SpringBoot приложению
 public class CrudBookController {
-
     @Autowired
-    private BookRepository bookRepository;
-
-    public Book findBookById(int id){
-        Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
-        return book;
-    }
+    BookService service;
 
     @ResponseBody
     @GetMapping("/books")   // GET метод, который будет возвращать список книг в React приложение
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return service.getAllBooks();
     }
 
     @PostMapping("/books")  // POST метод, который добавляет книгу
-    public Book createBook(@RequestBody Book book) {
-        return bookRepository.save(book);
+    public void createBook(@RequestBody Book book) {
+         service.save(book);
     }
 
     @GetMapping("/book/{id}")
     public Book getBook(@PathVariable Integer id) {
-        Book book = findBookById(id);
+        Book book = service.findById(id);
 
         return book;
     }
@@ -47,28 +44,22 @@ public class CrudBookController {
     public List<Book> getBook(@PathVariable("author") String author) {
 
 
-        List<Book> bookByAuthor = bookRepository.findByAuthorStartingWith(author);
-
-
-
-
-
-
+        List<Book> bookByAuthor = service.findByAuthorStartingWith(author);
         return  bookByAuthor;
     }
 
     @PutMapping("/book/{id}")
-    public Book update(@PathVariable("id") Integer id, @RequestBody Book updatedBook) {
-        Book initialBook = findBookById(id);
+    public void update(@PathVariable("id") Integer id, @RequestBody Book updatedBook) {
+        Book initialBook = service.findById(id);
         initialBook.setName(updatedBook.getName());
         initialBook.setAuthor(updatedBook.getAuthor());
         initialBook.setIban(updatedBook.getIban());
-        return bookRepository.save(initialBook);
-        }
+        service.save(initialBook);
+        };
     @DeleteMapping({"/book/{id}"})
     public void deleteBook(@PathVariable Integer id) {
-        Book deleteBook = findBookById(id);
-        bookRepository.delete(deleteBook);
+        Book deleteBook = service.findById(id);
+        service.delete(deleteBook);
     }
 
 }

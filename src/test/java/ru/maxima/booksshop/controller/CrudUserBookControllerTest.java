@@ -58,12 +58,13 @@ class CrudUserBookControllerTest {
     public void initUser() {
         String login = "ivan_mmf";
         var user = userRepository.findByLogin(login);
-        var password = passwordEncoder.encode("123");
+        var password = "123";
         if (user == null) {
             User testUser = new User();
             testUser.setLogin("ivan_mmf");
             testUser.setPassword(password);
             testUser.setRole("admin");
+            testUser.setEmail("ivan.p.rybnikov@gmail.com");
             userRepository.save(testUser);
         } else if (user.getPassword() == null) {
             user.setPassword(password);

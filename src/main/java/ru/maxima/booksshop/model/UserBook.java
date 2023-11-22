@@ -23,12 +23,12 @@ public class UserBook implements Serializable {
     private Integer id;
 
     @JsonBackReference(value = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
     @NotNull
     @JsonBackReference(value = "book_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
     @JoinColumn(name = "book_id")
     private Book book;
 

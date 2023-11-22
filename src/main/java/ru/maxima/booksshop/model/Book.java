@@ -32,6 +32,6 @@ public class Book implements Serializable {
     private String iban;
 
    // @JsonManagedReference(value = "book")
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<UserBook> users;
 }
