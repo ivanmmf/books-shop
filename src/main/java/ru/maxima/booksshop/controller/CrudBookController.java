@@ -50,11 +50,7 @@ public class CrudBookController {
 
     @PutMapping("/book/{id}")
     public void update(@PathVariable("id") Integer id, @RequestBody Book updatedBook) {
-        Book initialBook = service.findById(id);
-        initialBook.setName(updatedBook.getName());
-        initialBook.setAuthor(updatedBook.getAuthor());
-        initialBook.setIban(updatedBook.getIban());
-        service.save(initialBook);
+        service.update(id,updatedBook);
         };
     @DeleteMapping({"/book/{id}"})
     public void deleteBook(@PathVariable Integer id) {

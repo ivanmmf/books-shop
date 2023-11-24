@@ -1,30 +1,28 @@
 package ru.maxima.booksshop.service;
 
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ActiveProfiles;
 import ru.maxima.booksshop.exception.BookNotFoundException;
 import ru.maxima.booksshop.model.Book;
-import ru.maxima.booksshop.model.User;
 import ru.maxima.booksshop.repository.BookRepository;
-import ru.maxima.booksshop.repository.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
-
+@ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
     private BookRepository bookRepository;
     private BookServiceImpl bookService;
@@ -65,19 +63,14 @@ public class BookServiceTest {
                 .author("Lev")
                 .iban("123")
                 .build();
-        Book book2 = Book.builder()
-                .id(2)
-                .name("Peace")
-                .author("Tolstoy")
-                .iban("456")
-                .build();
+
         given(bookRepository.findById(1)).willReturn(Optional.ofNullable(book1));
         doThrow(BookNotFoundException.class).when(bookRepository)
                 .findById(3);
         Optional<Book> book3 = Optional.ofNullable(bookService.findById(1));
-
         assertThat(book3.get().getName()).isEqualTo("War");
         assertThrows(BookNotFoundException.class,() -> bookRepository.findById(3));
+
     }
 
     @Test
@@ -99,6 +92,8 @@ public class BookServiceTest {
         assertThat(books).hasSize(1);
         assertThat(books.get(0).getName()).isEqualTo("War");
     }
+
+
 
     @Test
     void save() {
@@ -126,5 +121,29 @@ public class BookServiceTest {
 
         verify(bookRepository, times(1)).delete(book1);
     }
+    @Test
+    void update() throws BookNotFoundException {
+        Book book1 = Book.builder()
+                .id(1)
+                .name("War")
+                .author("Lev")
+                .iban("123")
+                .build();
+        Book book2 = Book.builder()
+                .id(5)
+                .name("Peace")
+                .author("Tolstoy")
+                .iban("123")
+                .build();
+        given(bookRepository.findById(1)).willReturn(Optional.ofNullable(book1));
+        bookService.update(1, book2);
+
+        assert book1 != null;
+        assertThat(book1.getName()).isEqualTo("Peace");
+        verify(bookRepository).save(book1);
+        assertThatThrownBy(() -> bookService.update(2, book1))
+                .isInstanceOf(BookNotFoundException.class);
+    }
 
 }
+

@@ -50,7 +50,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public void update(int id, Book book) {
+    public void update(int id, Book book) throws BookNotFoundException {
         Optional<Book> initialBook = repository.findById(id);
 
         if(initialBook.isPresent()) {
@@ -58,7 +58,7 @@ public class BookServiceImpl implements BookService{
             initialBook.get().setAuthor(book.getAuthor());
             initialBook.get().setIban(book.getIban());
             repository.save(initialBook.get());
-        } ;
+        } else throw new BookNotFoundException() ;
 
     }
 };
