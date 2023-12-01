@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service    // создаём бин userService
-@Transactional(readOnly = true) // помечаем методы класса только на чтение
+//@Transactional(readOnly = true) // помечаем методы класса только на чтение
 public class BookServiceImpl implements BookService{
 
     private final BookRepository repository;
@@ -50,6 +50,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
+   // @Transactional
     public void update(int id, Book book) throws BookNotFoundException {
         Optional<Book> initialBook = repository.findById(id);
 
